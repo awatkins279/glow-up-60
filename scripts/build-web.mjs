@@ -19,7 +19,7 @@ const args = process.argv.slice(2);
 const baseIdx = args.indexOf('--base');
 const base = baseIdx >= 0 ? (args[baseIdx + 1] ?? '') : '';
 // Git Bash (MSYS) rewrites "/glow-up-60" into "C:/.../git/glow-up-60"; keep only the intended segment.
-let baseNorm = base.replace(/\/g, '/').replace(/\/$/, '');
+let baseNorm = base.replace(/\\/g, '/').replace(/\/$/, '');
 if (/^[A-Za-z]:\//.test(baseNorm)) baseNorm = '/' + baseNorm.split('/').pop();
 if (baseNorm && !baseNorm.startsWith('/')) baseNorm = '/' + baseNorm;
 // '' or '/glow-up-60'

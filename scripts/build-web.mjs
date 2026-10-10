@@ -18,7 +18,11 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
 const baseIdx = args.indexOf('--base');
 const base = baseIdx >= 0 ? (args[baseIdx + 1] ?? '') : '';
-const baseNorm = base.replace(/\/$/, ''); // '' or '/glow-up-60'
+// Git Bash (MSYS) rewrites "/glow-up-60" into "C:/.../git/glow-up-60"; keep only the intended segment.
+let baseNorm = base.replace(/\/g, '/').replace(/\/$/, '');
+if (/^[A-Za-z]:\//.test(baseNorm)) baseNorm = '/' + baseNorm.split('/').pop();
+if (baseNorm && !baseNorm.startsWith('/')) baseNorm = '/' + baseNorm;
+// '' or '/glow-up-60'
 
 const appJsonPath = join(root, 'app.json');
 const original = readFileSync(appJsonPath, 'utf8');

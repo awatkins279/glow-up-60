@@ -1,103 +1,30 @@
 # Glow Up 60
 
-A gamified 60-day accountability app for one person: eat more, gain lean muscle, get healthier, clear your skin. Everything lives on your phone. **No account, no login, no server**, works offline.
+A gamified 60-day accountability app for one person: eat more, gain lean muscle, get healthier, clear your skin. **No account, no login, no server.** All data stays on your phone.
 
-Built with Expo SDK 57, Expo Router, TypeScript, Zustand (persisted to AsyncStorage), Reanimated, react-native-svg, expo-notifications, expo-background-task.
-
----
-
-## a) Run it on your iPhone today (Expo Go)
-
-1. Install **Expo Go** from the App Store on your iPhone.
-2. On this PC, open a terminal in this folder and run:
-
-```bash
-cd "C:\Users\gymki\OneDrive\Documents\VanEpps 6th Grade Espanol\glow-up-60"
-```
-
-```bash
-npx expo start
-```
-
-3. A QR code appears in the terminal. Open the iPhone **Camera** app, point it at the QR code, tap the banner. Expo Go opens the app.
-4. Phone and PC must be on the same Wi-Fi. If the QR code does not connect (work networks, Norton firewall), use a tunnel instead:
-
-```bash
-npx expo start --tunnel
-```
-
-What works in Expo Go on iPhone: the whole app, local scheduled notifications, the background refresh task, haptics, photos, backup export/import. Two limits:
-
-- The app only loads while the dev server on this PC is running. Close the terminal and Expo Go cannot reload it (data on the phone is kept).
-- Notifications get the normal "active" priority. The "time-sensitive" priority for the 8 PM injection reminder only applies in a real build.
-
-First launch walks you through 3 onboarding screens: start date + bedtime + injection time, notification permission, then "Day 1 starts now."
+It runs as an installable offline web app (PWA), built with Expo SDK 58 / Expo Router / React Native Web, Zustand persisted to IndexedDB, Reanimated, react-native-svg.
 
 ---
 
-## b) Install it permanently
+## Use it on your phone
 
-All options use EAS Build (Expo's cloud build service, free tier is enough). One-time setup:
+**Live site:** https://awatkins279.github.io/glow-up-60/
 
-```bash
-npx eas-cli@latest login
-```
+1. Open that link in Safari on your iPhone.
+2. Tap the **Share** button, then **Add to Home Screen**, then **Add**.
+3. Open "Glow Up" from your home screen. From now on it opens full-screen like an app, loads with no connection, and keeps your progress on the phone.
+4. In Settings → Privacy, **set a 4-digit PIN** so nobody else can open it.
 
-```bash
-npx eas-cli@latest build:configure
-```
+Notes:
 
-The `eas.json` in this folder already defines three profiles: `development`, `preview` (Android APK), `production`.
+- The first open needs a connection (about 10 MB). After that it works fully offline.
+- Progress is stored in the browser's IndexedDB on that device. It survives closing the app and restarting the phone. Clearing Safari website data, or deleting the home-screen icon, erases it, so use Settings → **Export backup** now and then.
+- Reminders on the web can only fire while the app is open on screen (no server means no push). The in-app checklist, timing windows and scoring all work regardless.
+- The link is public but useless to anyone else: the app shows an empty program on their device, and the PIN blocks them on yours.
 
-### iPhone
+## Back up your data
 
-| Option | Cost | How long it lasts | Needs dev server running? | Notes |
-| --- | --- | --- | --- | --- |
-| **Expo Go** (above) | Free | As long as the PC server runs | Yes | Fastest. Fine for daily use if the PC stays on. |
-| **Development build** | Apple Developer account, $99/yr | 1 year per build (provisioning profile) | Yes for JS updates, but the app itself is a real installed app | Native modules get their real entitlements (time-sensitive notifications). Install over USB/AirDrop from the EAS build page. |
-| **TestFlight** | Apple Developer account, $99/yr | 90 days per build, then rebuild + resubmit | No | Closest to a "real" app. Full background behaviour, notifications at full priority, launches with no PC. |
-
-Development build:
-
-```bash
-npx eas-cli@latest build --profile development --platform ios
-```
-
-Then register your iPhone when prompted (`eas device:create`), install the build from the link EAS gives you, and run `npx expo start` to load the JS.
-
-TestFlight:
-
-```bash
-npx eas-cli@latest build --profile production --platform ios
-```
-
-```bash
-npx eas-cli@latest submit --platform ios
-```
-
-Then add yourself as an internal tester in App Store Connect and install from the TestFlight app. You never have to publish to the public App Store.
-
-Simple tradeoff: **Expo Go** is free and instant but tethered to the PC. **TestFlight** costs $99/yr but gives you a real standalone app with reliable background notifications. The development build is the middle ground and is mainly useful if you plan to keep changing the code.
-
-### Android (if you ever switch)
-
-```bash
-npx eas-cli@latest build --profile preview --platform android
-```
-
-EAS gives you a direct `.apk` download link. Open it on the phone, allow "install from unknown sources", done. No developer account needed, no expiry.
-
----
-
-## c) Back up your data
-
-Settings → **Export backup** writes one JSON file with everything (items, completions, scores, streak, workouts, check-ins, settings, photo paths) and opens the iOS share sheet. Save it to **Files → iCloud Drive** or AirDrop it to your Mac.
-
-Settings → **Import backup** picks that file and restores it (replaces current data).
-
-Progress photos are stored inside the app's private documents folder. They are not inside the JSON. If you reinstall the app, re-add photos or keep copies in Photos.
-
-Reinstalling or deleting the app wipes its storage, so export first.
+Settings → **Export backup** downloads one JSON file with everything (items, completions, scores, streak, workouts, check-ins, custom foods, photos). On iPhone it goes to Files. Settings → **Import backup** restores it, on the same phone or a new one.
 
 ---
 
@@ -133,13 +60,17 @@ Three rotating templates built for a chest bench, ab bench, dumbbells and kettle
 
 Weeks run Monday–Sunday. A "3x / week" item stays on Today until done 3 times, then collapses into "Done this week". When days left in the week ≤ remaining count it turns red: **MUST DO TODAY**. Items with "no back-to-back" on (Workout, Tretinoin, Glutathione, Melanotan 2) hide the day after a completion unless skipping would make the quota unreachable. You can pin fixed weekdays per item in Settings → Items.
 
-## Notifications
-
-All reminders are local. Every app open, every check/uncheck and every settings change cancels the schedule and rebuilds the next 7 days from your actual checklist, so a reminder is skipped when everything it mentions is already done. A background task refreshes the 7-day window daily when iOS allows it. iOS caps pending local notifications at 64, so the planner schedules at most 60 and nearest-first.
-
-Settings → Notifications has a toggle and time for each of the 10 reminders. Changing bedtime or injection time in Settings shifts the related reminders and the scoring windows automatically. Settings → **Send test notification** fires one in 3 seconds.
+---
 
 ## Development
+
+```bash
+npm install --legacy-peer-deps
+```
+
+```bash
+npx expo start --web
+```
 
 ```bash
 npm test
@@ -155,12 +86,33 @@ npm run lint
 
 Unit tests (47) cover the scheduling engine (quota math, week rollover, urgency, no-back-to-back, fixed weekdays), the scoring engine (all multipliers, bonuses, streak + freezes, levels, perfect day/night) and the food parser.
 
-Layout:
+### Deploying a new version
+
+```bash
+npm run build:web:pages
+```
+
+That runs `scripts/build-web.mjs --base /glow-up-60`: an Expo web export, PWA tags injected into `index.html`, a generated `sw.js` that precaches every file, and a `404.html` fallback for deep links. Then publish the `dist/` folder to the `gh-pages` branch:
+
+```bash
+git worktree add --detach ../glow-up-60-pages && cd ../glow-up-60-pages && git checkout --orphan gh-pages-tmp && git rm -rfq . ; cp -r ../glow-up-60/dist/. . && touch .nojekyll && git add -A && git commit -m "Deploy" && git push -f origin gh-pages-tmp:gh-pages && cd ../glow-up-60 && git worktree remove --force ../glow-up-60-pages
+```
+
+Installed copies pick up the new version the next time they open with a connection (the service worker swaps caches by version).
+
+### Native build (optional)
+
+The same code still runs as a native iOS/Android app through Expo. The `eas.json` profiles are kept for that; a TestFlight build needs an Apple Developer account.
+
+### Layout
 
 - `src/lib/scheduling.ts` – which items are due, quota pips, urgency, rest days
 - `src/lib/scoring.ts` – multipliers, bonuses, streak evaluation, levels
 - `src/lib/badges.ts` – badge conditions
 - `src/lib/foods.ts` – offline food database + natural-language parser
-- `src/lib/notificationPlan.ts` – pure 7-day reminder planner; `notifications.ts` talks to expo-notifications
-- `src/store/useStore.ts` – persisted state + all actions (complete/undo, nutrition auto-check, workouts, check-ins, backup)
+- `src/lib/notificationPlan.ts` – pure 7-day reminder planner; `notifications.ts` (native) / `notifications.web.ts` (browser timers)
+- `src/lib/photos.web.ts`, `backup.web.ts` – browser versions of photo storage and backup
+- `src/store/useStore.ts` – persisted state + all actions; `storage.ts` picks IndexedDB on web
+- `src/components/LockScreen.tsx` – PIN lock
 - `src/app/` – screens (Expo Router)
+- `scripts/build-web.mjs` – PWA build

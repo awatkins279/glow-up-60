@@ -1,0 +1,75 @@
+{
+  "expo": {
+    "name": "Glow Up 60",
+    "slug": "glow-up-60",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "glowup60",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#07080B",
+    "ios": {
+      "bundleIdentifier": "com.glowup60.app",
+      "supportsTablet": false,
+      "infoPlist": {
+        "UIBackgroundModes": [
+          "processing"
+        ],
+        "BGTaskSchedulerPermittedIdentifiers": [
+          "com.expo.modules.backgroundtask.processing"
+        ],
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "package": "com.glowup60.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#07080B",
+        "foregroundImage": "./assets/images/android-icon-foreground.png",
+        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "RECEIVE_BOOT_COMPLETED",
+        "SCHEDULE_EXACT_ALARM",
+        "POST_NOTIFICATIONS"
+      ]
+    },
+    "web": {
+      "output": "single",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#07080B",
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 120
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "color": "#39FF88",
+          "defaultChannel": "glowup-reminders"
+        }
+      ],
+      "expo-background-task",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Glow Up 60 uses your photos for your private progress pictures. They never leave your phone.",
+          "cameraPermission": "Glow Up 60 uses the camera for progress photos. They never leave your phone."
+        }
+      ],
+      "expo-sharing",
+      "expo-font"
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    }
+  }
+}
